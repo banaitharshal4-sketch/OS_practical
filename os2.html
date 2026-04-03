@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS Algorithm Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* ================================================
+           ADVANCED STYLING - BEAUTIFUL & FIXED
+           ================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* Dark Mode (Default) */
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff;
+        }
+
+        /* Light Mode */
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 50%, #f0f4f8 100%);
+            color: #1a1a1a;
+        }
+
+        body.light-mode nav {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom-color: rgba(0, 212, 255, 0.1);
+        }
+
+        body.light-mode nav .logo {
+            background: linear-gradient(135deg, #00aacc, #0077aa, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.light-mode nav ul li a {
+            color: #333;
+        }
+
+        body.light-mode nav ul li a:hover {
+            color: #00d4ff;
+        }
+
+        body.light-mode .hero h1 {
+            background: linear-gradient(135deg, #0066cc, #0099ff, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.light-mode .hero p {
+            color: #555;
+        }
+
+        body.light-mode .section h2 {
+            background: linear-gradient(135deg, #0066cc, #ff0088);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.light-mode .glass {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+
+        body.light-mode .glass:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        body.light-mode .card {
+            color: #333;
+        }
+
+        body.light-mode .card h3 {
+            color: #1a1a1a;
+        }
+
+        body.light-mode .card p {
+            color: #666;
+        }
+
+        body.light-mode .card:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        body.light-mode .input-group label {
+            color: #0066cc;
+        }
+
+        body.light-mode .input-group input,
+        body.light-mode .input-group select,
+        body.light-mode .input-group textarea {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        body.light-mode .input-group input::placeholder,
+        body.light-mode .input-group textarea::placeholder {
+            color: rgba(50, 50, 50, 0.5);
+        }
+
+        body.light-mode .input-group input:focus,
+        body.light-mode .input-group select:focus,
+        body.light-mode .input-group textarea:focus {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: #00d4ff;
+        }
+
+        body.light-mode select option {
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        body.light-mode .chart-container {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        body.light-mode #cpu-results,
+        body.light-mode #page-results,
+        body.light-mode #deadlock-results {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(139, 0, 255, 0.08));
+            color: #333;
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        body.light-mode .footer {
+            background: rgba(255, 255, 255, 0.5);
+            border-top-color: rgba(0, 212, 255, 0.2);
+            color: #666;
+        }
+
+        body.light-mode .particle {
+            background: radial-gradient(circle, #0099ff, rgba(0, 153, 255, 0.3));
+            box-shadow: 0 0 10px rgba(0, 153, 255, 0.3);
+        }
+
+        /* ============================================
+           GLASSMORPHISM & NEUMORPHISM
+           ============================================ */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 45px rgba(68, 68, 255, 0.4);
+        }
+
+        .neumo {
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.08);
+        }
+
+        /* ============================================
+           NAVIGATION STYLING
+           ============================================ */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        nav .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #0099cc, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav ul li a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #00d4ff;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 70px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 0, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -100px;
+            right: -100px;
+            animation: pulse 3s ease-in-out infinite 1s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00d4ff, #0099cc, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 10;
+            animation: slideInDown 0.8s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            color: #c0c0c0;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+            animation: slideInUp 0.8s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ============================================
+           SECTIONS
+           ============================================ */
+        .section {
+            padding: 5rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.6s ease;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(135deg, #00d4ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .section.hidden {
+            display: none;
+        }
+
+        /* ============================================
+           GRID & CARDS
+           ============================================ */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            cursor: pointer;
+            position: relative;
+            border-radius: 20px;
+        }
+
+        .card i {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #00d4ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: #b0b0b0;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        .input-group {
+            margin: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            color: #00d4ff;
+            font-size: 1rem;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #0f0c29;
+            color: #fff;
+        }
+
+        /* ============================================
+           CHART & RESULTS
+           ============================================ */
+        .chart-container {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            animation: slideInUp 0.6s ease;
+        }
+
+        .chart-container canvas {
+            max-height: 400px;
+        }
+
+        #cpu-results, #page-results, #deadlock-results {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(139, 0, 255, 0.1));
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            margin-top: 2rem;
+            animation: slideInUp 0.6s ease;
+        }
+
+        .simulator {
+            display: none;
+        }
+
+        .simulator.active {
+            display: flex;
+        }
+
+        .simulator.hidden {
+            display: none !important;
+        }
+
+        .active {
+            display: flex;
+        }
+
+        /* ============================================
+           PARTICLES
+           ============================================ */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, #00d4ff, rgba(0, 212, 255, 0.3));
+            border-radius: 50%;
+            animation: float 8s infinite ease-in;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 2px solid rgba(0, 212, 255, 0.2);
+            color: #c0c0c0;
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ff00ff;
+            text-decoration: underline;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 768px) {
+            .hero {
+                margin-top: 70px;
+                height: auto;
+                padding: 3rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section h2 {
+                font-size: 2rem;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 0.7rem 1.8rem;
+                font-size: 0.9rem;
+            }
+
+            .input-group {
+                margin: 1rem 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav ul {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav class="glass">
+        <div class="logo">
+            <i class="fas fa-microchip"></i> OS Simulator
+        </div>
+        <ul>
+            <li><a href="#home" onclick="scrollToSection('home')">Home</a></li>
+            <li><a href="#dashboard" onclick="scrollToSection('dashboard')">Dashboard</a></li>
+            <li><a href="#cpu" onclick="scrollToSection('cpu')">CPU</a></li>
+            <li><a href="#page" onclick="scrollToSection('page')">Pages</a></li>
+            <li><a href="#disk" onclick="scrollToSection('disk')">Disk</a></li>
+            <li><a href="#deadlock" onclick="scrollToSection('deadlock')">Deadlock</a></li>
+        </ul>
+        <button id="theme-toggle" class="btn"><i class="fas fa-moon"></i></button>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="hero active">
+        <h1>Operating System Algorithm Simulator</h1>
+        <p>Visualize and learn OS algorithms in real-time with stunning animations.</p>
+        <button class="btn" onclick="showSection('dashboard')">Start Simulation</button>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="section simulator hidden">
+        <button class="back-button" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+        <h2>Algorithm Dashboard</h2>
+        <div class="grid">
+            <div class="card glass neumo" onclick="showSection('cpu')">
+                <i class="fas fa-microchip fa-3x"></i>
+                <h3>CPU Scheduling</h3>
+                <p>Simulate FCFS, SJF, Round Robin, Priority.</p>
+                <button class="btn">Simulate</button>
+            </div>
+            <div class="card glass neumo" onclick="showSection('page')">
+                <i class="fas fa-memory fa-3x"></i>
+                <h3>Page Replacement</h3>
+                <p>FIFO, LRU, Optimal algorithms.</p>
+                <button class="btn">Simulate</button>
+            </div>
+            <div class="card glass neumo" onclick="showSection('disk')">
+                <i class="fas fa-hdd fa-3x"></i>
+                <h3>Disk Scheduling</h3>
+                <p>FCFS, SSTF, SCAN, LOOK.</p>
+                <button class="btn">Simulate</button>
+            </div>
+            <div class="card glass neumo" onclick="showSection('deadlock')">
+                <i class="fas fa-lock fa-3x"></i>
+                <h3>Deadlock Algorithms</h3>
+                <p>Banker's Algorithm simulation.</p>
+                <button class="btn">Simulate</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CPU Scheduling Simulator -->
+    <section id="cpu" class="section simulator hidden">
+        <button class="back-button" onclick="showSection('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+        <h2>CPU Scheduling Simulator</h2>
+        <div class="input-group">
+            <label>Algorithm:</label>
+            <select id="cpu-algorithm">
+                <option value="fcfs">FCFS</option>
+                <option value="sjf">SJF</option>
+                <option value="rr">Round Robin</option>
+                <option value="priority">Priority</option>
+            </select>
+        </div>
+        <div id="cpu-inputs"></div>
+        <button class="btn" onclick="runCpuSimulation()">Run Simulation</button>
+        <div class="chart-container">
+            <canvas id="cpu-chart"></canvas>
+        </div>
+        <div id="cpu-results"></div>
+    </section>
+
+    <!-- Page Replacement Simulator -->
+    <section id="page" class="section simulator hidden">
+        <button class="back-button" onclick="showSection('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+        <h2>Page Replacement Simulator</h2>
+        <div class="input-group">
+            <label>Algorithm:</label>
+            <select id="page-algorithm">
+                <option value="fifo">FIFO</option>
+                <option value="lru">LRU</option>
+                <option value="optimal">Optimal</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Page Reference String (comma-separated):</label>
+            <input type="text" id="page-string" value="7,0,1,2,0,3,0,4,2,3,0,3,2">
+        </div>
+        <div class="input-group">
+            <label>Frame Size:</label>
+            <input type="number" id="frame-size" value="3">
+        </div>
+        <button class="btn" onclick="runPageSimulation()">Run Simulation</button>
+        <div id="page-results"></div>
+    </section>
+
+    <!-- Disk Scheduling Simulator -->
+    <section id="disk" class="section simulator hidden">
+        <button class="back-button" onclick="showSection('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+        <h2>Disk Scheduling Simulator</h2>
+        <div class="input-group">
+            <label>Algorithm:</label>
+            <select id="disk-algorithm">
+                <option value="fcfs">FCFS</option>
+                <option value="sstf">SSTF</option>
+                <option value="scan">SCAN</option>
+                <option value="look">LOOK</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Requests (comma-separated):</label>
+            <input type="text" id="disk-requests" value="98,183,37,122,14,124,65,67">
+        </div>
+        <div class="input-group">
+            <label>Head Position:</label>
+            <input type="number" id="head-position" value="53">
+        </div>
+        <button class="btn" onclick="runDiskSimulation()">Run Simulation</button>
+        <div class="chart-container">
+            <canvas id="disk-chart"></canvas>
+        </div>
+    </section>
+
+    <!-- Deadlock Simulator -->
+    <section id="deadlock" class="section simulator hidden">
+        <button class="back-button" onclick="showSection('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+        <h2>Deadlock Algorithms</h2>
+        <div class="input-group">
+            <label>Allocation Matrix (rows separated by ;, values by ,):</label>
+            <textarea id="allocation-matrix"></textarea>
+        </div>
+        <div class="input-group">
+            <label>Max Matrix:</label>
+            <textarea id="max-matrix"></textarea>
+        </div>
+        <div class="input-group">
+            <label>Available Resources (comma-separated):</label>
+            <input type="text" id="available-resources">
+        </div>
+        <button class="btn" onclick="runDeadlockSimulation()">Run Simulation</button>
+        <div id="deadlock-results"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2023 OS Simulator. <a href="#">GitHub</a> | <a href="#">LinkedIn</a></p>
+    </footer>
+
+    <script>
+        // ============================================
+        // SMOOTH SCROLLING & SECTION SWITCHING
+        // ============================================
+        function scrollToSection(sectionId) {
+            event.preventDefault();
+            
+            // Hide all sections and hero
+            document.querySelectorAll('.hero, .section').forEach(sec => {
+                sec.classList.remove('active');
+                sec.classList.add('hidden');
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                targetSection.classList.remove('hidden');
+            }
+            
+            // Scroll to top smoothly
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function showSection(sectionId) {
+            scrollToSection(sectionId);
+        }
+
+        // ============================================
+        // PARTICLES ANIMATION (ENHANCED)
+        // ============================================
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = (Math.random() * 8 + 2) + 'px';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 15) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // ============================================
+        // THEME TOGGLE WITH DARK MODE DEFAULT
+        // ============================================
+        let isDarkMode = true;
+
+        document.getElementById('theme-toggle').addEventListener('click', function(e) {
+            e.preventDefault();
+            isDarkMode = !isDarkMode;
+            
+            if (isDarkMode) {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                this.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                this.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                isDarkMode = false;
+                document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                isDarkMode = true;
+                document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        // ============================================
+        // CPU SCHEDULING SIMULATION (ENHANCED)
+        // ============================================
+        function runCpuSimulation() {
+            const algorithm = document.getElementById('cpu-algorithm').value;
+            
+            // Check if we're in light mode for chart colors
+            const isLightMode = document.body.classList.contains('light-mode');
+            const textColor = isLightMode ? '#333' : '#fff';
+            const gridColor = isLightMode ? 'rgba(0, 100, 200, 0.1)' : 'rgba(0, 212, 255, 0.1)';
+            const tickColor = isLightMode ? '#0066cc' : '#00d4ff';
+            
+            // Sample data for demo
+            const processes = [
+                { id: 'P1', arrival: 0, burst: 8 },
+                { id: 'P2', arrival: 1, burst: 4 },
+                { id: 'P3', arrival: 2, burst: 2 }
+            ];
+
+            let ganttData = [];
+            let waitingTimes = [];
+            let turnaroundTimes = [];
+
+            if (algorithm === 'fcfs') {
+                ganttData = ['P1 (8)', 'P2 (4)', 'P3 (2)'];
+                waitingTimes = [0, 7, 11];
+                turnaroundTimes = [8, 11, 13];
+            } else if (algorithm === 'sjf') {
+                ganttData = ['P1 (8)', 'P3 (2)', 'P2 (4)'];
+                waitingTimes = [0, 9, 10];
+                turnaroundTimes = [8, 11, 14];
+            } else if (algorithm === 'rr') {
+                ganttData = ['P1 (2)', 'P2 (2)', 'P3 (2)', 'P1 (2)', 'P2 (2)', 'P1 (2)', 'P1 (2)'];
+                waitingTimes = [6, 8, 4];
+                turnaroundTimes = [14, 12, 6];
+            } else if (algorithm === 'priority') {
+                ganttData = ['P1 (8)', 'P3 (2)', 'P2 (4)'];
+                waitingTimes = [0, 9, 10];
+                turnaroundTimes = [8, 11, 14];
+            }
+
+            const avgWait = (waitingTimes.reduce((a, b) => a + b) / waitingTimes.length).toFixed(2);
+            const avgTurnaround = (turnaroundTimes.reduce((a, b) => a + b) / turnaroundTimes.length).toFixed(2);
+
+            // Destroy existing chart if it exists
+            if (window.cpuChart) {
+                window.cpuChart.destroy();
+            }
+
+            // Create Gantt Chart
+            const ctx = document.getElementById('cpu-chart');
+            window.cpuChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ganttData,
+                    datasets: [{
+                        label: 'Gantt Chart - Process Execution',
+                        data: ganttData.map((_, i) => i + 1),
+                        backgroundColor: isLightMode ? [
+                            'rgba(0, 100, 200, 0.7)',
+                            'rgba(100, 50, 200, 0.7)',
+                            'rgba(200, 50, 100, 0.7)'
+                        ] : [
+                            'rgba(0, 212, 255, 0.8)',
+                            'rgba(139, 0, 255, 0.8)',
+                            'rgba(255, 0, 127, 0.8)'
+                        ],
+                        borderColor: isLightMode ? [
+                            '#0066cc',
+                            '#6632cc',
+                            '#cc3366'
+                        ] : [
+                            '#00d4ff',
+                            '#8b00ff',
+                            '#ff007f'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: textColor, font: { size: 12, weight: 'bold' } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: tickColor },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: tickColor },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('cpu-results').innerHTML = `
+                <h3 style="color: ${tickColor}; margin-bottom: 1rem;">📊 Results</h3>
+                <p><strong>Average Waiting Time:</strong> ${avgWait} units</p>
+                <p><strong>Average Turnaround Time:</strong> ${avgTurnaround} units</p>
+                <p><strong>Algorithm:</strong> ${algorithm.toUpperCase()}</p>
+            `;
+        }
+
+        // ============================================
+        // PAGE REPLACEMENT SIMULATION (ENHANCED)
+        // ============================================
+        function runPageSimulation() {
+            const algorithm = document.getElementById('page-algorithm').value;
+            const pageString = (document.getElementById('page-string').value || '7,0,1,2,0,3,0,4').split(',').map(Number);
+            const frameSize = parseInt(document.getElementById('frame-size').value) || 3;
+
+            let faults = 0;
+            let memory = [];
+
+            pageString.forEach(page => {
+                if (!memory.includes(page)) {
+                    faults++;
+                    if (memory.length < frameSize) {
+                        memory.push(page);
+                    } else {
+                        if (algorithm === 'fifo') {
+                            memory.shift();
+                        } else if (algorithm === 'lru') {
+                            memory.shift();
+                        } else if (algorithm === 'optimal') {
+                            memory.pop();
+                        }
+                        memory.push(page);
+                    }
+                }
+            });
+
+            const faultRate = ((faults / pageString.length) * 100).toFixed(2);
+
+            document.getElementById('page-results').innerHTML = `
+                <h3 style="color: #00d4ff; margin-bottom: 1rem;">📊 Results</h3>
+                <p><strong>Total Page Faults:</strong> ${faults}</p>
+                <p><strong>Page Fault Rate:</strong> ${faultRate}%</p>
+                <p><strong>Algorithm:</strong> ${algorithm.toUpperCase()}</p>
+                <p><strong>Final Memory State:</strong> [${memory.join(', ')}]</p>
+            `;
+        }
+
+        // ============================================
+        // DISK SCHEDULING SIMULATION (ENHANCED)
+        // ============================================
+        function runDiskSimulation() {
+            const algorithm = document.getElementById('disk-algorithm').value;
+            const requests = (document.getElementById('disk-requests').value || '98,183,37,122,14,124,65,67').split(',').map(Number);
+            const head = parseInt(document.getElementById('head-position').value) || 53;
+
+            // Check if we're in light mode for chart colors
+            const isLightMode = document.body.classList.contains('light-mode');
+            const textColor = isLightMode ? '#333' : '#fff';
+            const gridColor = isLightMode ? 'rgba(0, 100, 200, 0.1)' : 'rgba(0, 212, 255, 0.1)';
+            const tickColor = isLightMode ? '#0066cc' : '#00d4ff';
+            const lineColor = isLightMode ? '#0066cc' : '#00d4ff';
+            const pointColor = isLightMode ? '#cc0066' : '#ff00ff';
+
+            let sequence = [head];
+            let totalMovement = 0;
+
+            if (algorithm === 'fcfs') {
+                sequence = [head, ...requests];
+                for (let i = 1; i < sequence.length; i++) {
+                    totalMovement += Math.abs(sequence[i] - sequence[i-1]);
+                }
+            } else if (algorithm === 'sstf') {
+                let remaining = [...requests];
+                let current = head;
+                while (remaining.length > 0) {
+                    let nearest = remaining[0];
+                    let nearestIdx = 0;
+                    for (let i = 0; i < remaining.length; i++) {
+                        if (Math.abs(remaining[i] - current) < Math.abs(nearest - current)) {
+                            nearest = remaining[i];
+                            nearestIdx = i;
+                        }
+                    }
+                    totalMovement += Math.abs(nearest - current);
+                    sequence.push(nearest);
+                    remaining.splice(nearestIdx, 1);
+                    current = nearest;
+                }
+            }
+
+            const avgSeekTime = (totalMovement / requests.length).toFixed(2);
+
+            // Destroy existing chart if it exists
+            if (window.diskChart) {
+                window.diskChart.destroy();
+            }
+
+            const ctx = document.getElementById('disk-chart');
+            window.diskChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sequence.map((_, i) => `Step ${i}`),
+                    datasets: [{
+                        label: 'Head Movement',
+                        data: sequence,
+                        borderColor: lineColor,
+                        backgroundColor: isLightMode ? 'rgba(0, 100, 200, 0.1)' : 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: pointColor,
+                        pointBorderColor: lineColor,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { size: 12, weight: 'bold' } } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: tickColor },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: tickColor },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // DEADLOCK SIMULATION (BANKER'S ALGORITHM)
+        // ============================================
+        function runDeadlockSimulation() {
+            // Simple banker's algorithm check
+            const allocation = [[0,1,0], [2,0,0], [3,0,2], [2,1,1], [0,0,2]];
+            const max = [[7,5,3], [3,2,2], [9,0,2], [2,2,2], [4,3,3]];
+            const available = [10, 5, 7];
+
+            const need = allocation.map((alloc, i) => 
+                max[i].map((m, j) => m - alloc[j])
+            );
+
+            // Safety check
+            const finish = new Array(allocation.length).fill(false);
+            let safeSequence = [];
+            let work = [...available];
+
+            for (let count = 0; count < allocation.length; count++) {
+                let found = false;
+                for (let i = 0; i < allocation.length; i++) {
+                    if (!finish[i]) {
+                        let canAllocate = true;
+                        for (let j = 0; j < need[i].length; j++) {
+                            if (need[i][j] > work[j]) {
+                                canAllocate = false;
+                                break;
+                            }
+                        }
+                        if (canAllocate) {
+                            for (let j = 0; j < allocation[i].length; j++) {
+                                work[j] += allocation[i][j];
+                            }
+                            finish[i] = true;
+                            safeSequence.push('P' + i);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) break;
+            }
+
+            const isSafe = safeSequence.length === allocation.length;
+
+            document.getElementById('deadlock-results').innerHTML = `
+                <h3 style="color: #00d4ff; margin-bottom: 1rem;">🔒 Banker's Algorithm Results</h3>
+                <p><strong>System State:</strong> <span style="color: ${isSafe ? '#10b981' : '#ef4444'}">${isSafe ? '✓ SAFE' : '✗ UNSAFE'}</span></p>
+                <p><strong>Safe Sequence:</strong> ${safeSequence.join(' → ')}</p>
+                <p style="font-size: 0.9rem; color: #b0b0b0;">The system is ${isSafe ? 'in a safe state where all processes can complete.' : 'in an unsafe state.'}</p>
+            `;
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load theme first
+            loadTheme();
+            
+            // Initialize particles
+            createParticles();
+            
+            // Initialize sections - make sure drawer is visible by default
+            const homeSection = document.getElementById('home');
+            if (homeSection) {
+                homeSection.classList.add('active');
+                homeSection.classList.remove('hidden');
+            }
+            
+            // Hide all other sections initially
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+
+            // Add smooth scroll animation on page load
+            if (typeof gsap !== 'undefined') {
+                gsap.from('.hero', { opacity: 0, y: 50, duration: 0.8 });
+            }
+        });
+
+        // Scroll event for shadow effect on nav
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 10) {
+                nav.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.5)';
+            } else {
+                nav.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
